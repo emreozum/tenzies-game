@@ -7,6 +7,8 @@ export default function App() {
 
     const [dice, setDice] = React.useState(allNewDice())
     const [tenzies, setTenzies] = React.useState(false)
+    const [rollLength, setRollLength] = React.useState(0)
+    const [isWin, setIsWin] = React.useState({winState: "Roll to start"})
     
     React.useEffect(() => {
         const allHeld = dice.every(die => die.isHeld)
@@ -14,6 +16,8 @@ export default function App() {
         const allSameValue = dice.every(die => die.value === firstValue)
         if (allHeld && allSameValue) {
             setTenzies(true)
+            setRollLength(0)
+            setIsWin({winState: "You Win!"})
         }
     }, [dice])
 
@@ -34,6 +38,17 @@ export default function App() {
     }
     
     function rollDice() {
+        if(rollLength<15){
+            setIsWin({winState: "Keep rolling"})
+            setRollLength(oldRollLength => oldRollLength + 1)
+        }
+        else{
+            setRollLength(0)
+            setDice(allNewDice())
+            setIsWin({winState: "You Lose!"})
+
+        }
+        
         if(!tenzies) {
             setDice(oldDice => oldDice.map(die => {
                 return die.isHeld ? 
@@ -43,6 +58,7 @@ export default function App() {
         } else {
             setTenzies(false)
             setDice(allNewDice())
+            
         }
     }
     
@@ -53,6 +69,8 @@ export default function App() {
                 die
         }))
     }
+
+    
     
     const diceElements = dice.map(die => (
         <Die 
@@ -72,11 +90,17 @@ export default function App() {
             <div className="dice-container">
                 {diceElements}
             </div>
+            <div>
+                <p>{isWin.winState}</p>
+            </div>
+            <div>
+                <p>Rolls: {rollLength}</p>
+            </div>
             <button 
                 className="roll-dice" 
                 onClick={rollDice}
             >
-                {tenzies ? "New Game" : "Roll"}
+                {tenzies || rollLength>=15 ? "New Game" : "Roll"}
             </button>
         </main>
     )
