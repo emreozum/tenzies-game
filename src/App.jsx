@@ -45,7 +45,10 @@ export default function App() {
         }
     }, [rollLength])
 
-    
+    function resetBestTime(){
+        setBestTime(0)
+        localStorage.setItem('bestTime', JSON.stringify(0))
+    }
 
     function generateNewDie() {
         return {
@@ -125,6 +128,11 @@ export default function App() {
                 onClick={rollDice}
             >
                 {tenzies || rollLength>=15 ? "New Game" : "Roll"}
+            </button>
+            <button
+                onClick={resetBestTime}
+                >
+                Reset Best Time
             </button>
             <div>
                 <p>Time: {time} Best Time: {bestTime}</p>
