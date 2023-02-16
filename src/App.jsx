@@ -10,7 +10,8 @@ export default function App() {
     const [rollLength, setRollLength] = React.useState(0)
     const [isWin, setIsWin] = React.useState({winState: "Roll to start"})
     const [time, setTime] = React.useState(0)
-    const [bestTime, setBestTime] = React.useState(0)
+    const [bestTime, setBestTime] = React.useState(JSON.parse(localStorage.getItem('bestTime')) || 0)
+   
    
     
     React.useEffect(() => {
@@ -22,13 +23,17 @@ export default function App() {
             setRollLength(0)
             setIsWin({winState: "You Win!"})
             if(time<bestTime || bestTime===0){
-                setBestTime(time)
+                if(time!==0){
+                    setBestTime(time)
+                    localStorage.setItem('bestTime', JSON.stringify(time))
+                    alert("New Best Time!")
+                }
             }
+            
         }
     }, [dice])
 
     React.useEffect(() => {
-        
         if(rollLength>0){
             const interval = setInterval(() => {
                 setTime(time => time + 1)
@@ -38,7 +43,6 @@ export default function App() {
         else{
          setTime(0)
         }
-        
     }, [rollLength])
 
     
@@ -92,8 +96,6 @@ export default function App() {
         }))
     }
 
-    
-    
     const diceElements = dice.map(die => (
         <Die 
             key={die.id} 
