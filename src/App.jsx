@@ -9,6 +9,9 @@ export default function App() {
     const [tenzies, setTenzies] = React.useState(false)
     const [rollLength, setRollLength] = React.useState(0)
     const [isWin, setIsWin] = React.useState({winState: "Roll to start"})
+    const [time, setTime] = React.useState(0)
+    const [bestTime, setBestTime] = React.useState(0)
+   
     
     React.useEffect(() => {
         const allHeld = dice.every(die => die.isHeld)
@@ -18,8 +21,27 @@ export default function App() {
             setTenzies(true)
             setRollLength(0)
             setIsWin({winState: "You Win!"})
+            if(time<bestTime || bestTime===0){
+                setBestTime(time)
+            }
         }
     }, [dice])
+
+    React.useEffect(() => {
+        
+        if(rollLength>0){
+            const interval = setInterval(() => {
+                setTime(time => time + 1)
+            }, 1000)
+            return () => clearInterval(interval)
+        }
+        else{
+         setTime(0)
+        }
+        
+    }, [rollLength])
+
+    
 
     function generateNewDie() {
         return {
@@ -102,6 +124,10 @@ export default function App() {
             >
                 {tenzies || rollLength>=15 ? "New Game" : "Roll"}
             </button>
+            <div>
+                <p>Time: {time} Best Time: {bestTime}</p>
+            </div>
+            
         </main>
     )
 }
